@@ -1,0 +1,8 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+models/__pycache__/
+
+# results folder
+.idea/
+runtime/
+output/

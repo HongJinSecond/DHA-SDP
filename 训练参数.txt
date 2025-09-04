@@ -1,0 +1,12 @@
+Project Aware:
+CCT5: 
+Focalloss alpha:0.9, Learning rate:1e-4, epochs 5, patience 2, early stop metric：eval gmean
+
+CodeT5:
+Focalloss alhpha:0.8 Learning rate 1e-4, epcohs 10, patience 2， early stop metric: eval loss
+
+
+Kmean:
+alpha 0.8, patience 2
+
+
