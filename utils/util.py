@@ -9,11 +9,14 @@ from transformers import (RobertaModel, RobertaTokenizer, RobertaConfig, T5ForCo
                           PLBartTokenizer, PLBartForConditionalGeneration, PLBartConfig)
 from sklearn.metrics import roc_auc_score, auc
 import math
-
+import transformers 
 
 import csv
 import os
 from typing import List, Union
+
+from sklearn.metrics import recall_score, precision_score, f1_score, auc, roc_curve,matthews_corrcoef
+
 
 def parse_jit_args():
     parser = argparse.ArgumentParser()
@@ -70,6 +73,8 @@ def set_seed(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
+    torch.cuda.manual_seed(args.seed)
+    transformers.set_seed(args.seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     if args.n_gpu > 0:
@@ -198,6 +203,31 @@ def ensure_directory_exists(directory_path):
 def convert_dtype_dataframe(df, feature_name):
     df = df.astype({i: 'float32' for i in feature_name})
     return df
+
+
+def calculate_metrics(pred_prob,pred_label,true_label):
+
+    fpr, tpr, thres = roc_curve(true_label, pred_prob)
+    auc_score = auc(fpr, tpr)
+    metrics = {
+        "accuracy": (pred_label == true_label).mean(),
+        "precision": precision_score(true_label, pred_label, average="binary"),
+        "recall": recall_score(true_label, pred_label, average="binary"),
+        "recall0": recall_score(true_label, pred_label, pos_label=0, average="binary"),
+        "f1": f1_score(true_label, pred_label, average="binary"),
+        "gmean": np.sqrt(
+            recall_score(true_label, pred_label, pos_label=0, average="binary") *
+            recall_score(true_label, pred_label, average="binary")
+        ),
+        "mcc": matthews_corrcoef(true_label, pred_label),
+        "auc":auc_score
+        
+    }
+
+    return metrics
+
+
+
 
 def effort_aware_metrics(test_features, result_df):
     result_df = result_df.sort_values(by='commit_hash')

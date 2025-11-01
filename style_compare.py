@@ -186,17 +186,17 @@ def compare_test(args, test_dataset_dict, base_model,cluster_manager,weight_dict
     test_expert_features=pd.read_pickle(args.test_data_file[1])
 
     lora_results.append({
-        "project": "all",
+        "style": "all",
         **calculate_metrics(global_pred_prob_lora,pred_label_lora, global_true_label),
         **effort_aware_metrics(test_expert_features,pd.read_csv(os.path.join(RESULTS_DIR,f"{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}/lora_output.csv")))
     })
     base_results.append({
-        "project": "all",
+        "style": "all",
         **calculate_metrics(global_pred_prob_base,pred_label_base, global_true_label),
         **effort_aware_metrics(test_expert_features,pd.read_csv(os.path.join(RESULTS_DIR,f"{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}/base_output.csv")))
     })
     outlier_results.append({
-        "project": "all",
+        "style": "all",
         **calculate_metrics(global_pred_prob_outlier,pred_label_outlier,global_true_label),
         **effort_aware_metrics(test_expert_features,pd.read_csv(os.path.join(RESULTS_DIR,f"{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}/outlier_output.csv")))
     })    
@@ -368,7 +368,7 @@ if __name__ == "__main__":
         args.strategy="Isolation"
         args.n_cluster=n_cluster
         for base_model in ["concat"]:
-            for pretrained in ["codebert", "graphcodebert", "unixcoder","plbart","codet5"]:
+            for pretrained in ["codebert"]:
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
                 args.cluster_model="Kmean"
                 args.base_model=base_model

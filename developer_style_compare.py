@@ -214,7 +214,7 @@ def compare_test(args, test_dataset_dict, base_model,cluster_manager:Hierarchica
     print(f"Base results saved to {result_path}")
 
     result_df = pd.DataFrame(outlier_results)
-    result_path = os.path.join(RESULTS_DIR, f"{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}/outlier_method.csv")
+    result_path = os.path.join(RESULTS_DIR, f"{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}/outlier_results.csv")
     result_df.to_csv(result_path, index=False)
     print(f"Base results saved to {result_path}")
 
@@ -374,14 +374,14 @@ if __name__ == "__main__":
                 args.cluster_model=f"developer_aware"
                 args.base_model=base_model
                 args.pretrained_model=pretrained
-                # with torch.no_grad():
-                #     main(args)
-                # torch.cuda.empty_cache()
+                with torch.no_grad():
+                    main(args)
+                torch.cuda.empty_cache()
                 print("Test End")
                 plot_comparison(
                     base_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "base_results.csv"),
                     lora_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "lora_results.csv"),
-                    outlier_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "outlier_method.csv"),
+                    outlier_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "outlier_results.csv"),
                     metrics=["f1", "gmean","mcc","recall"],  # 需要对比的指标
                     output_dir=f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}"
                 )

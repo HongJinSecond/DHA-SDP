@@ -41,14 +41,14 @@ class HierarchicalCluster:
         # 方法1: 孤立森林 (推荐)
         self.isolation_forest_outliers=dict()
 
-        # 方法2: 局部离群因子(LOF)
-        self.lof_outliers=dict()
+        # # 方法2: 局部离群因子(LOF)
+        # self.lof_outliers=dict()
 
-        # 方法3: 马氏距离
-        self.mahalanobis_outliers=dict()
+        # # 方法3: 马氏距离
+        # self.mahalanobis_outliers=dict()
 
-        # 方法4：one class SVM
-        self.svms=dict()
+        # # 方法4：one class SVM
+        # self.svms=dict()
 
 
     def _trainFeatureSplit(self,collections,cluster):
@@ -68,22 +68,22 @@ class HierarchicalCluster:
                 )
                 clf.fit(train)
 
-                lof = LocalOutlierFactor(
-                    contamination="auto", 
-                    novelty=True
-                )
-                lof.fit(train)
+                # lof = LocalOutlierFactor(
+                #     contamination="auto", 
+                #     novelty=True
+                # )
+                # lof.fit(train)
 
-                svm=OneClassSVM(nu=0.1, kernel="rbf", gamma="auto")
-                svm.fit(train)
+                # svm=OneClassSVM(nu=0.1, kernel="rbf", gamma="auto")
+                # svm.fit(train)
 
 
-                robust_cov = MinCovDet(random_state=self.args.seed,support_fraction=0.8).fit(train)
+                # robust_cov = MinCovDet(random_state=self.args.seed,support_fraction=0.8).fit(train)
                 
                 self.isolation_forest_outliers[key]=clf
-                self.lof_outliers[key]=lof
-                self.svms[key]=svm
-                self.mahalanobis_outliers[key]=robust_cov
+                # self.lof_outliers[key]=lof
+                # self.svms[key]=svm
+                # self.mahalanobis_outliers[key]=robust_cov
 
     def fit(self,trainDatasets):
         self.trainKeys=list(trainDatasets.keys())
@@ -142,21 +142,21 @@ class HierarchicalCluster:
         if strategy=="Isolation":
             return self.__isolation(test_sample,lora_key)
 
-        elif strategy=="Lof":
-            return self.__Lof(test_sample,lora_key)
+        # elif strategy=="Lof":
+        #     return self.__Lof(test_sample,lora_key)
         
-        elif strategy=="svm":
-            return self.__one_class_SVM(test_sample,lora_key)
+        # elif strategy=="svm":
+        #     return self.__one_class_SVM(test_sample,lora_key)
         
-        elif strategy=="Mahalanobis":
-            return self.__mahalanobis(test_sample,lora_key)
+        # elif strategy=="Mahalanobis":
+        #     return self.__mahalanobis(test_sample,lora_key)
         
-        elif strategy=="tri":
-            # 满足至少两种指标才算离群点
-            isolation=self.__isolation(test_sample,lora_key)
-            svm=self.__one_class_SVM(test_sample,lora_key)
-            mahalanobis=self.__mahalanobis(test_sample,lora_key)
-            return np.sum(np.stack([isolation,svm,mahalanobis],axis=-1),axis=-1)>=2
+        # elif strategy=="tri":
+        #     # 满足至少两种指标才算离群点
+        #     isolation=self.__isolation(test_sample,lora_key)
+        #     svm=self.__one_class_SVM(test_sample,lora_key)
+        #     mahalanobis=self.__mahalanobis(test_sample,lora_key)
+        #     return np.sum(np.stack([isolation,svm,mahalanobis],axis=-1),axis=-1)>=2
         
         else:
             print("Invalid command, no outlier adjustmemt!")
@@ -166,22 +166,22 @@ class HierarchicalCluster:
         clf=self.isolation_forest_outliers[lora_key]
         return clf.predict(test_sample) == -1  # -1表示异常
     
-    def __Lof(self,test_sample,lora_key):
-        lof=self.lof_outliers[lora_key]
-        return lof.predict(test_sample) == -1
+    # def __Lof(self,test_sample,lora_key):
+    #     lof=self.lof_outliers[lora_key]
+    #     return lof.predict(test_sample) == -1
     
-    def __one_class_SVM(self,test_sample,lora_key):
-        svm=self.svms[lora_key]
-        return svm.predict(test_sample)==-1
+    # def __one_class_SVM(self,test_sample,lora_key):
+    #     svm=self.svms[lora_key]
+    #     return svm.predict(test_sample)==-1
     
-    def __mahalanobis(self,test_sample,lora_key):
-        robust_cov=self.mahalanobis_outliers[lora_key]
-        mahal_dist = robust_cov.mahalanobis(test_sample)
+    # def __mahalanobis(self,test_sample,lora_key):
+    #     robust_cov=self.mahalanobis_outliers[lora_key]
+    #     mahal_dist = robust_cov.mahalanobis(test_sample)
         
-        # 计算阈值 - 使用卡方分布
-        n_features = 14
-        threshold = chi2.ppf(0.9999, df=n_features)
+    #     # 计算阈值 - 使用卡方分布
+    #     n_features = 14
+    #     threshold = chi2.ppf(0.9999, df=n_features)
     
-        # 标记离群点
-        outliers = mahal_dist > threshold
-        return outliers
+    #     # 标记离群点
+    #     outliers = mahal_dist > threshold
+    #     return outliers

@@ -399,6 +399,163 @@ def plot_comparison(paths, labels, metrics, output_dir):
     print(f"对比图表已保存至：{output_dir}")
 
 
+def cluster_distribution():
+    # 数据
+    '''
+    Project Aware
+    data = {
+        "train": {
+            "1": 8698,
+            "2": 2004,
+            "3": 3508,
+            "4": 2164
+        },
+        "valid": {
+            "1": 2902,
+            "2": 671,
+            "3": 1170,
+            "4": 722
+        },
+        "test": {
+            "1": 2913,
+            "2": 673,
+            "3": 1171,
+            "4": 723
+        }
+    }
+    '''
+
+
+    '''
+    Kmean 
+    data = {
+        "train": {
+            "3": 2324,
+            "2": 2824,
+            "0": 10816,
+            "1": 410
+        },
+        "valid": {
+            "1": 147,
+            "2": 2113,
+            "3": 609,
+            "0": 2596
+        },
+        "test": {
+            "0": 2713,
+            "2": 1728,
+            "3": 813,
+            "1": 226
+        }
+    }
+    '''
+
+
+    '''
+    Developer Aware
+    data = {
+        "train": {
+            "1": 2418,
+            "2": 814,
+            "3": 10269,
+            "4": 136
+        },
+        "valid": {
+            "1": 589,
+            "3": 2943,
+            "other": 513
+        },
+        "test": {
+            "1": 637,
+            "3": 1400,
+            "other": 3443
+        }
+    }
+    '''
+
+    data = {
+        "train": {
+            "3": 2324,
+            "2": 2824,
+            "0": 10816,
+            "1": 410
+        },
+        "valid": {
+            "1": 147,
+            "2": 2113,
+            "3": 609,
+            "0": 2596
+        },
+        "test": {
+            "0": 2713,
+            "2": 1728,
+            "3": 813,
+            "1": 226
+        }
+    }
+
+
+    # 创建子图
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+
+    # 颜色设置
+    colors = ['#ff9999', '#66b3ff', "#7dcf7d", '#ffcc99', '#ff99cc', '#c2c2f0']
+
+    # 绘制每个数据集的饼图
+    for i, (dataset_name, dataset_data) in enumerate(data.items()):
+        labels = list(dataset_data.keys())
+        values = list(dataset_data.values())
+        
+        # 计算百分比
+        total = sum(values)
+        percentages = [f'{(v/total)*100:.1f}%' for v in values]
+        
+        # 自定义autopct函数，显示数值和百分比
+        def make_autopct(values):
+            def my_autopct(pct):
+                total = sum(values)
+                val = int(round(pct * total / 100.0))
+                return f'{val}\n({pct:.1f}%)'
+            return my_autopct
+        
+        # 绘制饼图
+        wedges, texts, autotexts = axes[i].pie(
+            values, 
+            labels=labels, 
+            autopct=make_autopct(values),
+            colors=colors[:len(labels)],
+            startangle=90,
+            textprops={'fontsize': 10}
+        )
+        
+        # 设置标题
+        axes[i].set_title(f'{dataset_name.upper()} Dataset\n(Total: {total})', fontweight='bold', fontsize=12)
+        
+        # 美化文字
+        for autotext in autotexts:
+            autotext.set_color('white')
+            autotext.set_fontweight('bold')
+            autotext.set_fontsize(9)
+
+    # 添加总标题
+    plt.suptitle('Kmean Distribution Across Datasets', fontsize=16, fontweight='bold')
+
+    # 调整布局
+    plt.tight_layout()
+    plt.show()
+
+    # 打印详细数据统计
+    print("详细数据统计:")
+    print("=" * 50)
+    for dataset_name, dataset_data in data.items():
+        total = sum(dataset_data.values())
+        print(f"\n{dataset_name.upper()} Dataset (Total: {total}):")
+        print("-" * 30)
+        for label, value in dataset_data.items():
+            percentage = (value / total) * 100
+            print(f"  {label}: {value} ({percentage:.1f}%)")
+
+
 # 使用示例
 if __name__ == "__main__":
     # 1. 定义CSV文件路径
@@ -425,14 +582,15 @@ if __name__ == "__main__":
     #     # output_dir="runtime"  # 设为None则显示而不保存
     # )
 
-    plot_comparison(
-        paths=["result/project_f_1e-4/Isolation/base_results.csv",
-            "result/project_f_1e-4/Isolation/lora_results.csv",
-            "result/project_f_1e-4/Isolation_auto/outlier_results.csv",
-            "result/project_f_1e-4/Isolation_0.01/outlier_results.csv",
-            "result/project_f_1e-4/Isolation_0.05/outlier_results.csv",
-            "result/project_f_1e-4/Isolation_0.1/outlier_results.csv"],
-        labels=["Base", "lora","Iso_auto","Iso0.01","Iso0.05","Iso0.1"],
-        metrics=["f1", "gmean", "mcc", "recall"],  # 需要对比的指标
-        output_dir=f"result/project_f_1e-4/Isolation_compare"
-    )
+    # plot_comparison(
+    #     paths=["result/project_f_1e-4/Isolation/base_results.csv",
+    #         "result/project_f_1e-4/Isolation/lora_results.csv",
+    #         "result/project_f_1e-4/Isolation_auto/outlier_results.csv",
+    #         "result/project_f_1e-4/Isolation_0.01/outlier_results.csv",
+    #         "result/project_f_1e-4/Isolation_0.05/outlier_results.csv",
+    #         "result/project_f_1e-4/Isolation_0.1/outlier_results.csv"],
+    #     labels=["Base", "lora","Iso_auto","Iso0.01","Iso0.05","Iso0.1"],
+    #     metrics=["f1", "gmean", "mcc", "recall"],  # 需要对比的指标
+    #     output_dir=f"result/project_f_1e-4/Isolation_compare"
+    # )
+    cluster_distribution()

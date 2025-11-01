@@ -365,7 +365,7 @@ if __name__ == "__main__":
         args.strategy="Isolation"
         args.n_cluster=n_cluster
         for base_model in ["concat"]:
-            for pretrained in ["codebert", "graphcodebert", "unixcoder","plbart","codet5"]:
+            for pretrained in ["codebert"]:
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
                 args.cluster_model=f"project_final"
                 args.base_model=base_model

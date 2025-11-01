@@ -526,7 +526,7 @@ if __name__=="__main__":
                 args.n_cluster=n_cluster
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
                 args.base_model=base_model
-                args.cluster_model="project_final"
+                args.cluster_model="Kmean"
                 args.pretrained_model=pretrained
                 main(args)
                 torch.cuda.empty_cache()
