@@ -4,6 +4,12 @@
 
 ## Abstract
 
+<div style="color: red;">更新日期 2025/11/01 更新内容：在写论文的过程中整理了一下思路和逻辑，修改了部分关于核心方法和工作流程描述。</div>
+
+新增对模型架构的描述（Train 和 Test 的流程图）。
+
+StyleAware中三种方法的简单描述（在研究动机中修改内容）。
+
 ## 研究动机
 
 ### Developer Aware
@@ -18,7 +24,15 @@
 
 基于上述种种原因，我们**修改了**仅仅依赖开发者的思路，转而进一步尝试别的思路。
 
-### Cluster Aware
+
+
+——————————2025/11/1
+
+实验结果显示，此方法效果提升不明显很大一个原因是其有效数据太少，大部分数据都没有其对应的Lora，后续实验只考虑能够获取Lora的部分，发现性能提升明显。因此也加入到论文展示中
+
+
+
+### Data Distribution Aware
 
 第二种思路是聚类思路，简单来说就是根据其输入数据**（data level clustering）**进行聚类，然后对于每个聚类训练其特定的适配器。
 
@@ -31,11 +45,21 @@
 
 聚类方法上，我们做了一些探索，首先是简单使用K-Mean进行聚类。结果显示，无论我们如何更改K-Mean聚类中K的值，最终的表现结果仍然堪忧，因此我们试着使用DBSCAN去寻找最佳的聚类方式，结果却显示专家特征的分布是异常密集的，因此无法适用于聚类策略。（同时轮廓系数的得分也很低）。
 
+
+
+—————————— 2025/11/1 更新
+
+后续实验发现，虽然仅在聚类层面分析其聚类效果表现的性能不好，但是加入到Lora训练中可以发现其是有效的，模型可以根据Kmean的划分进行微调，并且提升其性能。
+
+
+
 ### Project Aware
 
-第三种思路是按照project对数据进行划分，为每个project训练其专有的适配器，这种划分方法很好地回避了Developer Aware所面对的问题：不存在数据集分布十分不均衡的现象，几乎每个Project都满足划分适配器的条件。事实上这种策略确实能很好地Work。
+第三种思路是按照project对数据进行划分，为每个project训练其专有的适配器，这种划分方法很好地回避了Developer Aware所面对的问题：不存在数据集分布十分不均衡的现象，几乎每个Project都满足划分适配器的条件。事实上这种策略确实能很好地Work。**这部分存在一个前提假定：那就是同一项目的所有提交都满足类似的数据分布模式，所谓的数据模式可能意味着缺陷生成分布或其他情况。**
 
 ------
+
+<div style="color:red">更新---最后还是决定在论文中同时阐述这三种方法，每种方法都有其适合的场景</div>
 
 
 
@@ -43,15 +67,39 @@
 
 ### 工作流程
 
+#### 模型框架
+
 本项目构想的模型工作流程具体如下：
 
-<div style="color: red;">--2025/07/09新增列表小标题--</div>
+<div style="color: red;">--2025/07/09新增列表小标题--
 
 1. **底模训练**：构建能够在整体数据集上完成SDP任务的模型，作为底模。
 2. **适配器训练：**分别训练特定的适配器（本实验用的Lora）。
-3. **推理：**根据样本的属性选择合适的适配器载入底模进行预测，以达到提高准确率的目的。
+3. **推理：**根据样本的属性选择合适的适配器载入底模进行预测，以达到提高准确率的目的。此处加入Weighted Prediction，在Lora和底模之间取一个平衡的值。
 
 ![process](pic\process.png)
+
+<div style="color:green">————2025/11/01 新增————
+
+#### 训练过程
+
+1. 在整个数据集上训练底模。
+2. 用StyleAware的方法对训练集进行聚类划分，能够得到n个簇。进一步将验证集也根据训练好的聚类模型进行划分；对于每个簇，使用其对应的训练集和验证集训练，基于底模训练其对应的Lora。
+3. 根据验证集的表现性能，训练Weighted Predicion中在每个簇上的weight。
+
+#### 测试过程
+
+如图所示，测试样本先到达StyleAware管理器，该模块会判断数据属于哪一个簇，并加载其对应的Lora（如果找不到合适的簇则返回空值）。
+
+在那之后，底模会装载获得的Lora，如果没有对应的Lora则直接使用原参数进行预测，得到两组结果（一组是底模原参数下的预测结果R0，另一组是加入Lora后的预测结果R1）。
+
+R0，R1会被输入给Weighted Prediction模块，该模块会判断样本是否为离群点(Outlier)，如果样本不是离群点，则直接使用Lora对应的结果R1；如果样本是异常点，则使用基于验证集训练的该簇对应的权重参数Weighted（如果没有则默认取0.2），计算新的输出
+$$
+R=(1-Weighted) \times R0+Weighted \times R1。
+$$
+![](pic\Prediction.png)
+
+**（如果该样本不存在对应适配的Lora，则意味着不存在R1，此时系统直接输出R=R0）**
 
 ### 基于JITFine[^1]修改的底模
 
@@ -255,7 +303,7 @@ mymodel = get_peft_model(mymodel, peft_config)
 
 具体策略如下：
 
-对于project aware，我们首先按照project的名字对其进行划分，得到一组集合，对于这些集合，我们对其进一步使用Wasserstein距离计算所有集合在这十四个特征的距离，取14个特征的平均距离作为集合的距离，最终能得到距离矩阵（任意一集合到另一个集合的距离）。
+对于project aware，我们首先按照project的名字对其进行划分，得到一组集合，对于这些集合，我们对其进一步使用Wasserstein距离计算所有集合在这十四个特征的距离，**取14个特征**的平均距离作为集合的距离，最终能得到距离矩阵（任意一集合到另一个集合的距离）。
 
 ```python
 from scipy.stats import wasserstein_distance
@@ -290,11 +338,13 @@ dendrogram(Z)
 
 ![hierarchical](pic\hierarchical.png)
 
+
+
 ### Outlier Detecter
 
 我们发现，加入Lora后，**<span style="color: blue;">有些数据集的表现性能反而下降了</span>**，但是理论上来说不该这样：因为我们在训练Lora的时候用最小Loss来做的早停策略，只会保存训练时性能最好的模型**（即最坏情况也是和底模性能一样）**，所以不应该会导致性能反而下降。
 
-唯一的可能性是，在训练阶段使用早停策略时，valid数据集和test的数据集分布差异较大，所以在valid上表现更好的样本在test上会出现性能反而下降的情况。
+一个潜在的可能性是，在训练阶段使用早停策略时，valid数据集和test的数据集分布差异较大，所以在valid上表现更好的样本在test上会出现性能反而下降的情况 （cite）。
 
 为了解决这一问题，一个很简答的思路是，我们通过某种策略找出test数据集中明显分布与valid集不同的点，即outlier（离群点）。也叫离群点检测。下列给出简答的离群点检测思路（也基于14个feature进行检验）：
 
@@ -586,7 +636,7 @@ RQ1是很自然的思路：首先是要验证方法的有效性。目前，我�
 
 
 [^3]: Pornprasit C, Tantithamthavorn C K. Jitline: A simpler, better, faster, finer-grained just-in-time defect prediction[C]//2021 IEEE/ACM 18th International Conference on Mining Software Repositories (MSR). IEEE, 2021: 369-379.
-[^4]:Hoang T, Kang H J, Lo D, et al. Cc2vec: Distributed representations of code changes[C]//Proceedings of the ACM/IEEE 42nd international conference on software engineering. 2020: 518-529.
+[^4]: Hoang T, Kang H J, Lo D, et al. Cc2vec: Distributed representations of code changes[C]//Proceedings of the ACM/IEEE 42nd international conference on software engineering. 2020: 518-529.
 [^5]: in B, Wang S, Liu Z, et al. Cct5: A code-change-oriented pre-trained model[C]//Proceedings of the 31st ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering. 2023: 1509-1521.
 
 ## 实验设置
@@ -711,9 +761,11 @@ Lora性能比较取性能最好的n（预实验是n=4）
 
 不难发现，在实际训练中，Lora2和4占比都非常小，属于比较无效的数据，所以在评估和测试中只能找到1，3对应的数据。观察第三个表格可以发现，最后测试只用了约36%的样本，剩下62%的样本都被归类到others里面了，这导致了实际性能提升不太多，那么如果只考虑1，3簇单独的性能提升会如何呢？
 
-结果显示：  <span style="color:red">**Todo**</span>
+结果显示：  
 
+![](pic\developer_new_f1.png)
 
+![](pic\developer_new_gmean.png)
 
 #### RQ1.2 模型分别在不同簇上的性能提升
 
