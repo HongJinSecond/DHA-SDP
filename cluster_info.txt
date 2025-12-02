@@ -1,9 +1,0 @@
---------------For cluster n=6------------------
-------------For training dataset:----------
-label:2: 1734 samples.
-label:0: 2752 samples.
-label:1: 3110 samples.
-label:5: 1449 samples.
-label:3: 7034 samples.
-label:4: 295 samples.
-

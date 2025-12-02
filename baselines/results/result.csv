@@ -1,0 +1,4 @@
+method,f1,auc,gmean,recall_at_20_percent_effort,effort_at_20_percent_LOC_recall,p_opt
+CC2Vec,0.1595,0.5,0,0.6295,0.0197,0.824
+JITLine,0.261,0.8022,0.4011,0.7053,0.0154,0.8826
+CCT5,0.4485,0.8815,0.7066,0.8105,0.0103,0.9364
