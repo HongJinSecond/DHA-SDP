@@ -348,22 +348,11 @@ def plot_comparison(base_path, lora_path, outlier_path, metrics, output_dir):
 
 if __name__ == "__main__":
     args = parse_jit_args()
-    # if not os.path.exists(args.output_dir):
-    #     os.makedirs(args.output_dir)
-    # print("Train Lora Start")
-    # for base_model in ["concat"]:
-    #     for pretrained in ["codebert"]:
-    #         for n_cluster in [4]:
-    #             print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
-    #             args.base_model=base_model
-    #             args.cluster_model="developer_aware_final"
-    #             args.pretrained_model=pretrained
-    #             args.n_cluster=n_cluster
-    #             train_lora(args)
-    #             torch.cuda.empty_cache()
-    # print("Train Lora End")
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+
     print("Test Start")
-    # for strategy in ["Isolation","Lof","Mahalanobis","tri"]:
+
     for n_cluster in [4]:
         args.strategy="Isolation"
         args.n_cluster=n_cluster

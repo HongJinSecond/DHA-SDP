@@ -67,12 +67,12 @@ class ConcatModel(nn.Module):
 class FocalLoss(nn.Module):
     def __init__(self,args):
         """
-        Focal Loss 实现，适用于类别不平衡的二分类问题。
-
-        参数:
-            alpha (float): 类别1的权重，范围[0, 1]。默认0.75，适用于类别1为少数类的情况。
-            gamma (float): 调节难易样本的因子，默认2。
-            eps (float): 数值稳定性参数，防止log(0)。
+        Implementation of Focal Loss for imbalanced binary classification.
+        
+        Args:
+            alpha (float): Weight for class 1, in range [0, 1]. Default 0.75, suitable when class 1 is the minority.
+            gamma (float): Focusing parameter to adjust easy/hard samples. Default 2.
+            eps (float): Numerical stability term to prevent log(0).
         """
         super(FocalLoss, self).__init__()
         self.alpha = args.alpha
@@ -81,33 +81,33 @@ class FocalLoss(nn.Module):
 
     def forward(self, prob, target):
         """
-        参数:
-            prob (Tensor): 预测的概率值（属于类别1的概率），形状为(batch_size, )
-            target (Tensor): 真实标签，0或1，形状与prob相同。
-
-        返回:
-            Tensor: 计算后的Focal Loss。
+        Args:
+            prob (Tensor): Predicted probability for class 1, shape (batch_size, )
+            target (Tensor): Ground truth labels (0 or 1), same shape as prob.
+            
+        Returns:
+            Tensor: Computed Focal Loss value.
         """
-        # 确保输入形状一致
+        # Ensure consistent shapes
         prob = prob.view(-1)
-        target = target.view(-1).float()  # 转换为float以匹配where的条件
-
-        # 数值稳定性处理，防止log(0)
+        target = target.view(-1).float()  # Convert to float for torch.where condition
+        
+        # Numerical stability: prevent log(0)
         prob = torch.clamp(prob, self.eps, 1 - self.eps)
-
-        # 计算p_t：当target=1时取prob，否则取1-prob
+        
+        # Compute p_t: prob when target=1, 1-prob otherwise
         p_t = torch.where(target == 1, prob, 1 - prob)
-
-        # 计算交叉熵损失项
+        
+        # Cross-entropy term
         ce_loss = -torch.log(p_t)
-
-        # 计算alpha因子：类别1使用alpha，类别0使用1-alpha
+        
+        # Alpha factor: alpha for class 1, 1-alpha for class 0
         alpha_t = torch.where(target == 1, self.alpha, 1 - self.alpha)
-
-        # 计算调制因子和总损失
+        
+        # Compute modulating factor and final loss
         focal_loss = alpha_t * torch.pow(1 - p_t, self.gamma) * ce_loss
-
-        # 返回平均损失
+        
+        # Return mean loss
         return focal_loss.mean()
 
 

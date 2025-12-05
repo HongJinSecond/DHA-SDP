@@ -347,25 +347,11 @@ if __name__ == "__main__":
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-    # print("Train Start")
-    # for base_model in ["concat"]:
-    #     for pretrained in ["codebert", "graphcodebert", "unixcoder","plbart"]:
-    #         for n_cluster in [4]:
-    #             args.n_cluster=n_cluster
-    #             print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
-    #             args.base_model=base_model
-    #             args.cluster_model="project_final"
-    #             args.pretrained_model=pretrained
-    #             train_lora(args)
-    #             torch.cuda.empty_cache()
-    # print("Train End")
-    # print("Test Start")
-
     for n_cluster in [4]:
         args.strategy="Isolation"
         args.n_cluster=n_cluster
         for base_model in ["concat"]:
-            for pretrained in ["codebert"]:
+            for pretrained in ["codebert","codet5", "graphcodebert", "unixcoder","plbart"]:
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
                 args.cluster_model=f"project_final"
                 args.base_model=base_model

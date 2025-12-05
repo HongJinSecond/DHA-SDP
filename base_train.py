@@ -1,3 +1,8 @@
+'''
+This file is for Base Model training, you can train your own base model or just use our pre-trained Base Model.
+'''
+
+
 import torch
 import os
 import logging
@@ -10,9 +15,7 @@ from peft import LoraConfig, get_peft_model
 from torch.optim import AdamW
 from utils.util import parse_jit_args, set_seed, build_model_tokenizer_config,ensure_directory_exists,write_training_results
 from utils.process_datasets import JITFineDataset
-from models.SingleModel import SingleModel
 from models.ConcatModel import ConcatModel
-from models.ManualModel import ManualModel
 from config import *
 
 logger = logging.getLogger(__name__)
@@ -232,8 +235,6 @@ def main(args):
 
     set_seed(args)
 
-
-
     if args.do_train:
         model, tokenizer, config = build_model_tokenizer_config(args)
         if args.pretrained_model in ["codet5"]:
@@ -249,14 +250,8 @@ def main(args):
         model.print_trainable_parameters()
         print(f"trainable layer:{peft_config}")
 
-        if args.base_model == "concat":
-            mymodel = ConcatModel(model, config, tokenizer, args).to(device)
-        elif args.base_model == "single":
-            mymodel = SingleModel(model, config, tokenizer, args).to(device)
-        elif args.base_model == "manual":
-            mymodel = ManualModel(model, config, tokenizer, args).to(device)
-        else:
-            raise ValueError(f"Invalid base model: {args.base_model}")
+        mymodel = ConcatModel(model, config, tokenizer, args).to(device)
+
         train_dataset = JITFineDataset(tokenizer, args, "train")
         eval_dataset = JITFineDataset(tokenizer, args, "eval")
         the_best_model_file=train(args, train_dataset, eval_dataset, mymodel)
@@ -266,23 +261,15 @@ def main(args):
         model_name=f"{args.base_model}-{args.pretrained_model}-final.pt"
         # Merge the overall lora into baseline models.
         save_dir=os.path.join(args.output_dir, f"checkpoints/{args.base_model}")
-        if args.base_model !="manual":
-            mymodel.encoder =  mymodel.encoder.merge_and_unload()
+        mymodel.encoder =  mymodel.encoder.merge_and_unload()
         # Save the state dictionary.
         ensure_directory_exists(save_dir)
         torch.save(mymodel.state_dict(), os.path.join(save_dir,model_name))
 
+    ### This part can test the performance of Base Model ###
     if args.do_test:
         model, tokenizer, config = build_model_tokenizer_config(args)
-
-        if args.base_model == "concat":
-            mymodel = ConcatModel(model, config, tokenizer, args).to(device)
-        elif args.base_model == "single":
-            mymodel = SingleModel(model, config, tokenizer, args).to(device)
-        elif args.base_model == "manual":
-            mymodel = ManualModel(model, config, tokenizer, args).to(device)
-        else:
-            raise ValueError(f"Invalid base model: {args.base_model}")
+        mymodel = ConcatModel(model, config, tokenizer, args).to(device)
 
         test_dataset = JITFineDataset(tokenizer, args, "test")
         model_name=f"{args.base_model}-{args.pretrained_model}-final.pt"
@@ -296,8 +283,10 @@ if __name__ == "__main__":
     args = parse_jit_args()
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
+    # "concat" means we both use expert feature and semantic feature
     for base_model in ["concat"]:
         for pretrained in ["codet5"]:
+            # You can add more pre-trained models like ["codebert","codet5", "graphcodebert", "unixcoder","plbart"]
             print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
             args.base_model=base_model
             args.pretrained_model=pretrained

@@ -264,7 +264,7 @@ if __name__ == "__main__":
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     for base_model in ["concat"]:
-        for pretrained in ["codet5"]:
+        for pretrained in ["codebert","codet5", "graphcodebert", "unixcoder","plbart"]:
             for n_cluster in [4]:
                 args.n_cluster=n_cluster
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")

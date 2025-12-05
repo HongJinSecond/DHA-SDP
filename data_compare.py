@@ -350,19 +350,6 @@ if __name__ == "__main__":
     args = parse_jit_args()
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
-    # print("start training")
-    # print("Train Start")
-    # for base_model in ["concat"]:
-    #     for pretrained in ["codebert", "graphcodebert", "unixcoder","plbart","codet5"]:
-    #         for n_cluster in [4]:
-    #             args.n_cluster=n_cluster
-    #             print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
-    #             args.base_model=base_model
-    #             args.cluster_model="Kmean"
-    #             args.pretrained_model=pretrained
-    #             train_lora(args)
-    #             torch.cuda.empty_cache()
-    # print("Train End")
     print("Test Start")
     for n_cluster in [4]:
         args.strategy="Isolation"

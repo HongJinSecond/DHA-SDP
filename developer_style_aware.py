@@ -1,3 +1,7 @@
+'''
+This file is for Lora traning, specially use the 'developer aware' strategy.
+'''
+
 import torch
 import os
 import dill
@@ -218,11 +222,10 @@ def main(args):
     model, tokenizer, config = build_model_tokenizer_config(args)
 
 
-
     ####################################### Load datasets ######################################################
     train_dataset_dict = load_developer_datas(tokenizer, args, "train")
 
-    ###################################### 层次聚类 ##############################################
+    ###################################### Hierarchical clustering ##############################################
 
     fcluster=HierarchicalCluster(args,n_cluster=args.n_cluster)
     fcluster.fit(train_dataset_dict)
@@ -231,7 +234,7 @@ def main(args):
     if args.do_train:
         peft_config = get_peft_lora_config(args)
         eval_dataset_dict = load_developer_datas(tokenizer, args, "eval")
-        ##################### 层次聚类 #########################    
+        ##################### Hierarchical clustering #########################    
         eval_dataset_dict = fcluster.splitDatasets(eval_dataset_dict)
 
         ######################## Split the datasets for many loras #####################################
@@ -240,7 +243,7 @@ def main(args):
             if developer_name=="other":
                 continue
             torch.cuda.empty_cache()
-            ################################# The Base Model should be reload for training each Lora #################################
+            ################################# The Base Model should be reloaded for training each Lora #################################
             model, tokenizer, config = build_model_tokenizer_config(args)
 
             if args.base_model == "concat":
@@ -251,16 +254,17 @@ def main(args):
                 mymodel = ManualModel(model, config, tokenizer, args).to(device)
             else:
                 raise ValueError(f"Invalid base model: {args.base_model}")
+
             logging.info(f"Run for projecy: {developer_name}")
             ###################################### Load Base Model ####################################################
             base_model_name = f"{args.base_model}-{args.pretrained_model}-final.pt"
             base_model_dir = os.path.join(args.output_dir, f"checkpoints/{args.base_model}")
             mymodel.load_state_dict(torch.load(os.path.join(base_model_dir, base_model_name),weights_only=True),strict=True)
-            # Make sure
+            # Use PEFT to adapt Lora
             mymodel = get_peft_model(mymodel, peft_config)
             mymodel.print_trainable_parameters()
             eval_lora_datasets = eval_dataset_dict.get(developer_name)
-            # Train Target Lora
+            ################# Train Target Lora ####################
             train(args, train_lora_dataset, eval_lora_datasets, mymodel,Style_name=str(developer_name))
 
         # cluster_manager.cluster_model.save(f"{OUTPUT_DIR}/lora/{args.cluster_model}/mycluster_model.bin") # Save cluster model
@@ -270,7 +274,7 @@ if __name__ == "__main__":
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     for base_model in ["concat"]:
-        for pretrained in ["codet5", "graphcodebert", "unixcoder"]:
+        for pretrained in ["codebert","codet5", "graphcodebert", "unixcoder","plbart"]:
             for n_cluster in [4]:
                 args.n_cluster=n_cluster
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
