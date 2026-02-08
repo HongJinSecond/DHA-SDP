@@ -357,7 +357,7 @@ if __name__ == "__main__":
         for base_model in ["concat"]:
             for pretrained in ["codebert"]:
                 print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
-                args.cluster_model="Kmean"
+                args.cluster_model="Kmeans"
                 args.base_model=base_model
                 args.pretrained_model=pretrained
                 

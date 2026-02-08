@@ -271,7 +271,7 @@ if __name__ == "__main__":
             for i in [4]:
                 args.base_model=base_model
                 args.n_cluster=i
-                args.cluster_model=f"Kmean"
+                args.cluster_model=f"Kmeans"
                 args.pretrained_model=pretrained
                 main(args)
                 torch.cuda.empty_cache()

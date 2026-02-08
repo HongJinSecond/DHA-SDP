@@ -48,7 +48,7 @@ files `features_<>.pkl` are the expert features (14 dimension).
 
 ## ./result
 
-`./Kmean`, `developer_aware` and `project_final` are the model performance of the three style aware strategy. We finally save the average output for each PLM.
+`./Kmeans`, `developer_aware` and `project_final` are the model performance of the three style aware strategy. We finally save the average output for each PLM (In our experiment, K-Means was used to achieve clustering based on data distribution, so the folder `Kmeans` actually corresponds to the **Data Distribution Aware** mentioned in the paper.).
 
 `RQ1_1` displays the result table for our RQ1.1.
 
@@ -72,7 +72,7 @@ This is the folder which contains the util script for our experiment.
 
 ## Base Model
 
-***You can get our pre-trained models from xxxxxxx. Download it to the root directory, then you can start the testing phase directly without retraining.***
+***You can get our pre-trained models from [20030530lee/StyleAware4SDP at main](https://huggingface.co/20030530lee/StyleAware4SDP/tree/main). Download it to the root directory, then you can start the testing phase directly without retraining.***
 
 We suggest you use our pre-trained model, but if you want to train your own model, run the script as below:
 
@@ -112,7 +112,7 @@ python -W ignore base_train.py --do_test --base_train
 
 
 
-## Style Aware Model
+## Data-Heterogeneity Aware Model
 
 Same as the process of training or testing, you can change the files to choose the PLMs you like to use. 
 
@@ -132,7 +132,7 @@ Test:
 python -W ignore data_compare.py --do_test --lora_train
 ```
 
-The file xxx_compare.py will run the test experiment and save the result in `./result/Kmean`
+The file xxx_compare.py will run the test experiment and save the result in `./result/Kmeans`
 
 
 
@@ -190,5 +190,21 @@ python -W ignore cct5_run.py --do_test
 
 
 
-# 
+## Save Result Table
+
+After running all the test scripts, make sure that the experimental results have been saved to the corresponding folder. 
+
+**RQ1 - RQ3 Table**
+
+```shell
+python RQs.py
+```
+
+
+
+**Significant result**
+
+Run `Significant_result.ipynb`
+
+
 

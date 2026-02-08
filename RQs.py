@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 MODEL_NAME_LIST = ["codebert","plbart", "graphcodebert", "unixcoder",  "codet5","cct5"]
-CLUSTER_MODEL_LIST = ["developer_aware","Kmean","project_final"]
+CLUSTER_MODEL_LIST = ["developer_aware","Kmeans","project_final"]
 N_CLUSTER = 4
 BASE_MODEL = "concat"
 
@@ -14,7 +14,7 @@ def result_table(metrics,output_dir):
         # first run for base
         line=[]
         for model in MODEL_NAME_LIST:
-            base_df=pd.read_csv(os.path.join(f"result/Kmean/{str(N_CLUSTER)}/average/{model}", "base_results.csv"),index_col=0)
+            base_df=pd.read_csv(os.path.join(f"result/Kmeans/{str(N_CLUSTER)}/average/{model}", "base_results.csv"),index_col=0)
             base_value=base_df.loc["all"][metric].round(4)
             line.append(base_value)
         data_table.append(line)
@@ -256,11 +256,11 @@ def effort_aware_compare_table(metric,output_path,target_file="outlier_results.c
     Create and save the result table for effort-aware metrics: E20R, R20E and Popt.
     '''
     result_table=[]
-    for mode in ["base","developer_aware","Kmean","project_final"]:
+    for mode in ["base","developer_aware","Kmeans","project_final"]:
         performance=[]
         if mode=="base":
             for model in MODEL_NAME_LIST:
-                df_1=pd.read_csv(os.path.join(f"result/Kmean/{str(N_CLUSTER)}/average/{model}", "base_results.csv"),index_col=0)
+                df_1=pd.read_csv(os.path.join(f"result/Kmeans/{str(N_CLUSTER)}/average/{model}", "base_results.csv"),index_col=0)
                 df_2=pd.read_csv(os.path.join(f"result/project_final/{str(N_CLUSTER)}/average/{model}", "base_results.csv"),index_col=0)
                 df_3=pd.read_csv(os.path.join(f"result/developer_aware/{str(N_CLUSTER)}/average/{model}", "base_results.csv"),index_col=0)
 
@@ -278,7 +278,7 @@ def effort_aware_compare_table(metric,output_path,target_file="outlier_results.c
                 performance.append(value)
 
         result_table.append(performance)
-    ndf=pd.DataFrame(result_table,index=["base","developer_aware","Kmean","project"],columns=MODEL_NAME_LIST)
+    ndf=pd.DataFrame(result_table,index=["base","developer_aware","Kmeans","project"],columns=MODEL_NAME_LIST)
     ndf.to_csv(output_path)
 
 
