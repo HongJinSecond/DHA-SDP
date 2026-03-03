@@ -1,22 +1,22 @@
-This is a project for SDP, which use Lora to train specific adapter for LLM models to track SDP prediction.
+# Data-Heterogeneity-Aware JIT-SDP Framework
 
+In this project, we designed a framework that clusters datasets based on different data heterogeneities and trains LORA in order to achieve rapid adaptation for the JIT-SDP task.
 
-
-# Environment
+## Environment
 
 Python 3.10
 
 Windows 11
 
-# Structure
+## Structure
 
-## ./baselines
+### ./baselines
 
 This folder contains the two base line models we use: JITLine and CC2VEC.  Check the file `./baselines/results/result.csv` can get the experimental result of the two models.
 
 
 
-## ./clusters
+### ./clusters
 
 This folder contains our base cluster models. (K-Mean and Hierarchical).
 
@@ -26,7 +26,7 @@ This folder contains our base cluster models. (K-Mean and Hierarchical).
 
 
 
-## ./dataset
+### ./dataset
 
 The dataset we use. 
 
@@ -36,7 +36,7 @@ files `features_<>.pkl` are the expert features (14 dimension).
 
 
 
-## ./models
+### ./models
 
 `CCT5.py` is the code for model cct5.
 
@@ -46,7 +46,7 @@ files `features_<>.pkl` are the expert features (14 dimension).
 
 
 
-## ./result
+### ./result
 
 `./Kmeans`, `developer_aware` and `project_final` are the model performance of the three style aware strategy. We finally save the average output for each PLM (In our experiment, K-Means was used to achieve clustering based on data distribution, so the folder `Kmeans` actually corresponds to the **Data Distribution Aware** mentioned in the paper.).
 
@@ -62,15 +62,15 @@ files `features_<>.pkl` are the expert features (14 dimension).
 
 
 
-## ./utils
+### ./utils
 
 This is the folder which contains the util script for our experiment.
 
 
 
-# Run the code
+## Run the code
 
-## Base Model
+### Base Model
 
 ***You can get our pre-trained models from [20030530lee/StyleAware4SDP at main](https://huggingface.co/20030530lee/StyleAware4SDP/tree/main). Download it to the root directory, then you can start the testing phase directly without retraining.***
 
@@ -112,7 +112,7 @@ python -W ignore base_train.py --do_test --base_train
 
 
 
-## Data-Heterogeneity Aware Model
+### Data-Heterogeneity Aware Model
 
 Same as the process of training or testing, you can change the files to choose the PLMs you like to use. 
 
@@ -190,7 +190,7 @@ python -W ignore cct5_run.py --do_test
 
 
 
-## Save Result Table
+### Save Result Table
 
 After running all the test scripts, make sure that the experimental results have been saved to the corresponding folder. 
 

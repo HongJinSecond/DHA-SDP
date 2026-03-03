@@ -449,7 +449,7 @@ def main(args):
         train_dataset_dict = fcluster.splitDatasets(train_dataset_dict)
         test_dataset_dict = load_project_datas(tokenizer, args, "test")
         valid_dataset_dict = load_project_datas(tokenizer, args, "eval")
-        ############################# 层次聚类 ####################################
+        ############################# Hierarchical Clustering ####################################
         test_dataset_dict = fcluster.splitDatasets(test_dataset_dict)
         valid_dataset_dict = fcluster.splitDatasets(valid_dataset_dict)
 
@@ -462,7 +462,7 @@ def main(args):
         train_dataset_dict = fcluster.splitDatasets(train_dataset_dict)
         test_dataset_dict = load_developer_datas(tokenizer, args, "test")
         valid_dataset_dict = load_developer_datas(tokenizer, args, "eval")
-        ############################# 层次聚类 ####################################
+        ############################# Hierarchical Clustering ####################################
         test_dataset_dict = fcluster.splitDatasets(test_dataset_dict)
         valid_dataset_dict = fcluster.splitDatasets(valid_dataset_dict)
 
@@ -538,6 +538,6 @@ if __name__=="__main__":
                         base_path=os.path.join(f"result/{args.cluster_model}/{str(args.n_cluster)}/{args.pretrained_model}", "base_results.csv"),
                         lora_path=os.path.join(f"result/{args.cluster_model}/{str(args.n_cluster)}/{args.pretrained_model}", "lora_results.csv"),
                         outlier_path=os.path.join(f"result/{args.cluster_model}/{str(args.n_cluster)}/{args.pretrained_model}", "outlier_results.csv"),
-                        metrics=["f1", "gmean","auc","recall"],  # 需要对比的指标
+                        metrics=["f1", "gmean","auc","recall"],  # Metrics used
                         output_dir=f"result/{args.cluster_model}/{str(args.n_cluster)}/{args.pretrained_model}"
                     )

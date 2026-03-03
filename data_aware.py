@@ -14,13 +14,19 @@ from torch.optim import AdamW
 from models.FinalModel import FinalModel
 from utils.util import parse_jit_args, set_seed, build_model_tokenizer_config,ensure_directory_exists,write_training_results,get_peft_lora_config
 from utils.process_datasets import JITFineDataset
-from models.SingleModel import SingleModel
 from models.ConcatModel import ConcatModel
-from models.ManualModel import ManualModel
 from config import *
 
 from clusters.cluster_manager import ClusterManager
 from clusters.feature_cluster import FeatureClusterProcessor
+
+
+'''
+This file is for the strategy -- Data Driven. 
+
+Run this script and train Loras for Base Model based on Data Driven Aware (Kmeans in our work).
+
+'''
 
 logger = logging.getLogger(__name__)
 
@@ -53,22 +59,12 @@ def train(args, train_dataset, eval_dataset, mymodel,Style_name=None):
     output_dir = os.path.join(output_dir, str(args.n_cluster))
     output_dir = os.path.join(output_dir,args.base_model)
     output_dir = os.path.join(output_dir,args.pretrained_model)
-    #######################################Run Time Log Information File Path:TODO: Can Be removed###########################################
-    log_dir = os.path.join(RUNTIME_DIR, "lora")
-    log_dir = os.path.join(log_dir, args.cluster_model)
-    log_dir = os.path.join(log_dir,str(args.n_cluster))
-    log_dir = os.path.join(log_dir,args.base_model)
-    log_dir = os.path.join(log_dir,args.pretrained_model)
-    ensure_directory_exists(log_dir)
     ensure_directory_exists(output_dir)
-    log_file= os.path.join(log_dir,f"{Style_name}.csv")
     # Lora Name
     output_file = os.path.join(output_dir, Style_name)
 
-    ###################################TODO Removed when polished############################################
     # write the runtime information
     ensure_directory_exists(output_file)
-    write_training_results(args, first_row=True,log_file=log_file)
     #################################### First save, empty Lora #########################################################
     model_to_save = mymodel.module if hasattr(mymodel, 'module') else mymodel
     model_to_save.save_pretrained(output_file)
@@ -113,11 +109,6 @@ def train(args, train_dataset, eval_dataset, mymodel,Style_name=None):
             if (step + 1) % args.save_steps == 0:
                 if eval_dataset is not None:
                     results = evaluate(args, eval_dataset, mymodel)
-                    ##################################TODO removed after experiment######################
-                    # Write the runtime information
-                    write_training_results(args, epoch=idx, step=step+1,
-                                            results=results,
-                                            log_file=log_file)
                     #######################################################################################表现性能肯定是先下降再上升的，所以如果以最开始最优的表现作为早停是会出错的
                     if results["eval_loss"] < min_loss:
                         patience = 0
@@ -240,10 +231,6 @@ def main(args):
 
             if args.base_model == "concat":
                 mymodel = ConcatModel(model, config, tokenizer, args).to(device)
-            elif args.base_model == "single":
-                mymodel = SingleModel(model, config, tokenizer, args).to(device)
-            elif args.base_model == "manual":
-                mymodel = ManualModel(model, config, tokenizer, args).to(device)
             else:
                 raise ValueError(f"Invalid base model: {args.base_model}")
 
@@ -266,6 +253,7 @@ if __name__ == "__main__":
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     for base_model in ["concat"]:
+        # PLMs
         for pretrained in ["codebert","codet5", "graphcodebert", "unixcoder","plbart"]:
             print(f"——————————————————run base model {base_model} on encoder {pretrained}————————————————————")
             for i in [4]:

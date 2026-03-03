@@ -9,9 +9,7 @@ from torch.utils.data import DataLoader, SequentialSampler
 from models.FinalModel import FinalModelWeight as FinalModel
 from utils.util import parse_jit_args, set_seed, build_model_tokenizer_config,get_peft_lora_config,ensure_directory_exists
 from utils.process_datasets import load_developer_datas
-from models.SingleModel import SingleModel
 from models.ConcatModel import ConcatModel
-from models.ManualModel import ManualModel
 from config import *
 from developer_style_aware import main as train_lora
 from clusters.HierarchicalCluster import HierarchicalCluster
@@ -21,8 +19,11 @@ from weightTrainer import weight_calculator
 logger = logging.getLogger(__name__)
 import pandas as pd
 import matplotlib.pyplot as plt
-
 from utils.util import write_test_results_to_csv
+
+'''
+This is a script to run the comparision experiment for the Developer-Aware strategy.
+'''
 
 columns = ["developer", "accuracy", "precision", "recall", "f1", "gmean", "mcc", "auc_score"]
 
@@ -234,22 +235,18 @@ def main(args):
     ####################################### Load datasets ######################################################
     train_dataset_dict = load_developer_datas(tokenizer, args, "train")
 
-    ####################################### 层次聚类 #########################################
+    ####################################### HierarchicalCluster #########################################
     fcluster=HierarchicalCluster(args,n_cluster=args.n_cluster)
     fcluster.fit(train_dataset_dict)
 
     if args.base_model == "concat":
         mymodel = ConcatModel(model, config, tokenizer, args).to(device)
-    elif args.base_model == "single":
-        mymodel = SingleModel(model, config, tokenizer, args).to(device)
-    elif args.base_model == "manual":
-        mymodel = ManualModel(model, config, tokenizer, args).to(device)
     else:
         raise ValueError(f"Invalid base model: {args.base_model}")
 
     test_dataset_dict = load_developer_datas(tokenizer, args, "test")
     valid_dataset_dict = load_developer_datas(tokenizer,args,"eval")
-    ############################# 层次聚类 ####################################
+    ############################# HierarchicalCluster ####################################
     test_dataset_dict = fcluster.splitDatasets(test_dataset_dict)
     valid_dataset_dict = fcluster.splitDatasets(valid_dataset_dict)
 
@@ -273,56 +270,42 @@ import seaborn as sns
 
 def plot_comparison(base_path, lora_path, outlier_path, metrics, output_dir):
     """
-    对比可视化函数：生成三组数据的柱状对比图
+    Plot
     
     参数：
-    base_path -- 基准数据路径
-    lora_path -- LoRA数据路径
-    outlier_path -- 异常数据路径
     metrics -- 需要对比的指标列表
     output_dir -- 输出目录路径
     """
-    # 设置美观的样式
-    sns.set_style("whitegrid")
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.facecolor'] = '0.98'
     
-    # 读取数据并设置索引
     base_df = pd.read_csv(base_path, index_col=0)
     lora_df = pd.read_csv(lora_path, index_col=0)
     outlier_df = pd.read_csv(outlier_path, index_col=0)
 
-    # 验证数据一致性
     if not (base_df.index.equals(lora_df.index) and base_df.index.equals(outlier_df.index)):
-        raise ValueError("输入数据的索引不一致！")
+        raise ValueError("Wrong index！")
 
-    # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
 
-    # 定义更美观的配色
-    colors = sns.color_palette("husl", 3)  # 使用seaborn的husl调色板
+    colors = sns.color_palette("husl", 3)
 
-    # 遍历每个指标
     for metric in metrics:
-        # 提取数据
         base = base_df[metric]
         lora = lora_df[metric]
         outlier = outlier_df[metric]
 
-        # 配置绘图参数
         bar_width = 0.25
-        index = np.arange(len(base))  # X轴位置
+        index = np.arange(len(base))  # X
         fig, ax = plt.subplots(figsize=(12, 6))
 
-        # 绘制三组柱状图（使用新配色）
-        bars_base = ax.bar(index - bar_width, base, bar_width, 
+        bars_base = ax.bar(index - bar_width, base, bar_width,
                           label='Base', color=colors[0])
         bars_lora = ax.bar(index, lora, bar_width, 
                           label='LoRA', color=colors[1])
         bars_outlier = ax.bar(index + bar_width, outlier, bar_width, 
                             label='Our', color=colors[2])
 
-        # 设置坐标轴
         ax.set_xticks(index)
         ax.set_xticklabels(base.index, rotation=45, ha='right', fontsize=9)
         ax.set_xlabel('Data Index', fontsize=11)
@@ -330,20 +313,17 @@ def plot_comparison(base_path, lora_path, outlier_path, metrics, output_dir):
         ax.set_title(f'Comparison of {metric} Across Groups', fontsize=13, pad=20)
         ax.legend(frameon=True, shadow=True)
 
-        # 添加数值标签（保留4位小数）
         for bars in [bars_base, bars_lora, bars_outlier]:
             ax.bar_label(bars, padding=3, fontsize=8, 
-                        fmt='%.4f')  # 格式化为4位小数
+                        fmt='%.4f')
 
-        # 自动调整布局
         plt.tight_layout()
 
-        # 保存图像
         output_path = os.path.join(output_dir, f'{metric}_comparison.png')
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         plt.close()
 
-    print(f"对比图表已保存至：{output_dir}")
+    print(f"Saved in：{output_dir}")
 
 
 if __name__ == "__main__":
@@ -371,7 +351,7 @@ if __name__ == "__main__":
                     base_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "base_results.csv"),
                     lora_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "lora_results.csv"),
                     outlier_path=os.path.join(f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}", "outlier_results.csv"),
-                    metrics=["f1", "gmean","mcc","recall"],  # 需要对比的指标
+                    metrics=["f1", "gmean","mcc","recall"],  # Metrics
                     output_dir=f"result/{args.cluster_model}/{args.n_cluster}/{args.pretrained_model}"
                 )
 
