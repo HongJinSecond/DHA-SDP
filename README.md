@@ -207,4 +207,8 @@ python RQs.py
 Run `Significant_result.ipynb`
 
 
+**Figure Plot**
+Run `plot.py`
+Run `outlier_stats.py`
+
 

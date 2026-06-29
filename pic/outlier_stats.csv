@@ -1,0 +1,12 @@
+strategy,cluster,total,outlier_count,normal_count,outlier_ratio
+Kmeans,Cluster 0,2713,354,2359,0.13048286030224843
+Kmeans,Cluster 2,1728,395,1333,0.22858796296296297
+Kmeans,Cluster 3,813,199,614,0.24477244772447723
+Kmeans,Cluster 1,226,66,160,0.2920353982300885
+Developer Aware,Cluster 1,637,179,458,0.28100470957613816
+Developer Aware,Cluster 3,1400,657,743,0.4692857142857143
+Developer Aware,Other,3443,0,3443,0.0
+Project Aware,Cluster 1,2913,1122,1791,0.38516992790937177
+Project Aware,Cluster 2,673,99,574,0.14710252600297177
+Project Aware,Cluster 3,1171,364,807,0.3108454312553373
+Project Aware,Cluster 4,723,286,437,0.39557399723374825

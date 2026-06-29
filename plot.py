@@ -142,7 +142,7 @@ def plot_comparison(base_path, lora_path, metrics, output_dir):
         plt.tight_layout()
 
         # 保存结果
-        save_path = os.path.join(output_dir, f"{metric}_comparison.png")
+        save_path = os.path.join(output_dir, f"{metric}_comparison.pdf")
         plt.savefig(save_path)
         plt.close()
         plt.show()
@@ -219,8 +219,8 @@ def plot_multiple_csv_comparison(csv_paths, metrics, labels=None, output_dir=Non
     # 保存或显示结果
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
-        save_path = os.path.join(output_dir, "metrics_comparison.png")
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        save_path = os.path.join(output_dir, "metrics_comparison.pdf")
+        plt.savefig(save_path, bbox_inches='tight')
         plt.close()
         print(f"对比图已保存至: {save_path}")
     else:
@@ -392,168 +392,136 @@ def plot_comparison(paths, labels, metrics, output_dir):
         plt.tight_layout()
 
         # 保存图像
-        output_path = os.path.join(output_dir, f'{metric}_comparison.png')
-        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        output_path = os.path.join(output_dir, f'{metric}_comparison.pdf')
+        plt.savefig(output_path, bbox_inches='tight')
         plt.close()
 
     print(f"对比图表已保存至：{output_dir}")
 
 
 def cluster_distribution():
-    # 数据
-    '''
-    Project Aware
-    data = {
-        "train": {
-            "1": 8698,
-            "2": 2004,
-            "3": 3508,
-            "4": 2164
+    # 三组数据
+    all_data = {
+        "Project Aware": {
+            "train": {
+                "1": 8698,
+                "2": 2004,
+                "3": 3508,
+                "4": 2164
+            },
+            "valid": {
+                "1": 2902,
+                "2": 671,
+                "3": 1170,
+                "4": 722
+            },
+            "test": {
+                "1": 2913,
+                "2": 673,
+                "3": 1171,
+                "4": 723
+            }
         },
-        "valid": {
-            "1": 2902,
-            "2": 671,
-            "3": 1170,
-            "4": 722
+        "Kmean": {
+            "train": {
+                "3": 2324,
+                "2": 2824,
+                "0": 10816,
+                "1": 410
+            },
+            "valid": {
+                "1": 147,
+                "2": 2113,
+                "3": 609,
+                "0": 2596
+            },
+            "test": {
+                "0": 2713,
+                "2": 1728,
+                "3": 813,
+                "1": 226
+            }
         },
-        "test": {
-            "1": 2913,
-            "2": 673,
-            "3": 1171,
-            "4": 723
-        }
-    }
-    '''
-
-
-    '''
-    Kmean 
-    data = {
-        "train": {
-            "3": 2324,
-            "2": 2824,
-            "0": 10816,
-            "1": 410
-        },
-        "valid": {
-            "1": 147,
-            "2": 2113,
-            "3": 609,
-            "0": 2596
-        },
-        "test": {
-            "0": 2713,
-            "2": 1728,
-            "3": 813,
-            "1": 226
-        }
-    }
-    '''
-
-
-    '''
-    Developer Aware
-    data = {
-        "train": {
-            "1": 2418,
-            "2": 814,
-            "3": 10269,
-            "4": 136
-        },
-        "valid": {
-            "1": 589,
-            "3": 2943,
-            "other": 513
-        },
-        "test": {
-            "1": 637,
-            "3": 1400,
-            "other": 3443
-        }
-    }
-    '''
-
-    data = {
-        "train": {
-            "3": 2324,
-            "2": 2824,
-            "0": 10816,
-            "1": 410
-        },
-        "valid": {
-            "1": 147,
-            "2": 2113,
-            "3": 609,
-            "0": 2596
-        },
-        "test": {
-            "0": 2713,
-            "2": 1728,
-            "3": 813,
-            "1": 226
+        "Developer Aware": {
+            "train": {
+                "1": 2418,
+                "2": 814,
+                "3": 10269,
+                "4": 136
+            },
+            "valid": {
+                "1": 589,
+                "3": 2943,
+                "other": 513
+            },
+            "test": {
+                "1": 637,
+                "3": 1400,
+                "other": 3443
+            }
         }
     }
 
-
-    # 创建子图
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+    # 创建输出目录
+    output_dir = "pic"
+    os.makedirs(output_dir, exist_ok=True)
 
     # 颜色设置
     colors = ['#ff9999', '#66b3ff', "#7dcf7d", '#ffcc99', '#ff99cc', '#c2c2f0']
 
-    # 绘制每个数据集的饼图
-    for i, (dataset_name, dataset_data) in enumerate(data.items()):
-        labels = list(dataset_data.keys())
-        values = list(dataset_data.values())
-        
-        # 计算百分比
-        total = sum(values)
-        percentages = [f'{(v/total)*100:.1f}%' for v in values]
-        
-        # 自定义autopct函数，显示数值和百分比
-        def make_autopct(values):
-            def my_autopct(pct):
-                total = sum(values)
-                val = int(round(pct * total / 100.0))
-                return f'{val}\n({pct:.1f}%)'
-            return my_autopct
-        
-        # 绘制饼图
-        wedges, texts, autotexts = axes[i].pie(
-            values, 
-            labels=labels, 
-            autopct=make_autopct(values),
-            colors=colors[:len(labels)],
-            startangle=90,
-            textprops={'fontsize': 10}
-        )
-        
-        # 设置标题
-        axes[i].set_title(f'{dataset_name.upper()} Dataset\n(Total: {total})', fontweight='bold', fontsize=12)
-        
-        # 美化文字
-        for autotext in autotexts:
-            autotext.set_color('white')
-            autotext.set_fontweight('bold')
-            autotext.set_fontsize(9)
+    for group_name, data in all_data.items():
+        # 创建子图
+        fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
-    # 添加总标题
-    plt.suptitle('Kmean Distribution Across Datasets', fontsize=16, fontweight='bold')
+        # 绘制每个数据集的饼图
+        for i, (dataset_name, dataset_data) in enumerate(data.items()):
+            raw_labels = list(dataset_data.keys())
+            values = list(dataset_data.values())
 
-    # 调整布局
-    plt.tight_layout()
-    plt.show()
+            # 将数字键转换为 Cluster N，other 转换为 Outlier
+            legend_labels = []
+            for k in raw_labels:
+                if k == "other":
+                    legend_labels.append("Other")
+                else:
+                    legend_labels.append(f"Cluster {k}")
 
-    # 打印详细数据统计
-    print("详细数据统计:")
-    print("=" * 50)
-    for dataset_name, dataset_data in data.items():
-        total = sum(dataset_data.values())
-        print(f"\n{dataset_name.upper()} Dataset (Total: {total}):")
-        print("-" * 30)
-        for label, value in dataset_data.items():
-            percentage = (value / total) * 100
-            print(f"  {label}: {value} ({percentage:.1f}%)")
+            # 计算百分比
+            total = sum(values)
+
+            # 自定义autopct函数，显示数值和百分比
+            def make_autopct(values):
+                def my_autopct(pct):
+                    total = sum(values)
+                    val = int(round(pct * total / 100.0))
+                    return f'{val}\n({pct:.1f}%)'
+                return my_autopct
+
+            # 绘制饼图（不显示旁边的标签）
+            wedges, texts, autotexts = axes[i].pie(
+                values,
+                autopct=make_autopct(values),
+                colors=colors[:len(raw_labels)],
+                startangle=90,
+                textprops={'fontsize': 50}
+            )
+
+            # 设置标题和图例
+            axes[i].set_title(f'{dataset_name.upper()} Dataset\n(Total: {total})', fontweight='bold', fontsize=16)
+            axes[i].legend(wedges, legend_labels, loc='upper left', fontsize=13)
+
+            # 美化文字
+            for autotext in autotexts:
+                autotext.set_color('white')
+                autotext.set_fontweight('bold')
+                autotext.set_fontsize(18)
+
+        # 调整布局并保存
+        plt.tight_layout()
+        save_path = os.path.join(output_dir, f"{group_name.replace(' ', '_')}_distribution.pdf")
+        plt.savefig(save_path, bbox_inches='tight')
+        plt.close()
+        print(f"饼图已保存至: {save_path}")
 
 
 # 使用示例
