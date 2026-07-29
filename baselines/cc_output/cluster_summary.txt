@@ -1,0 +1,94 @@
+===== ClusterCommit Replication Summary =====
+
+Train size: 16374 | Test size: 5480
+Projects: 21 | Features (Kamei - SEXP): 13
+Classifier: RandomForest (n_estimators=100, class_weight=balanced)
+
+--- Clustering (Label Propagation on Maven deps) ---
+Projects with pom.xml: 20 | without pom (singleton): 1 -> ['ant-ivy']
+Graph: 20 project nodes, 313 library nodes, 442 edges
+#clusters: 18
+  cluster 0: ['commons-bcel']
+  cluster 1: ['commons-validator']
+  cluster 2: ['giraph']
+  cluster 3: ['gora']
+  cluster 4: ['commons-vfs']
+  cluster 5: ['commons-codec', 'commons-collections', 'commons-net', 'opennlp']
+  cluster 6: ['commons-beanutils']
+  cluster 7: ['commons-compress']
+  cluster 8: ['commons-configuration']
+  cluster 9: ['commons-jcs']
+  cluster 10: ['commons-dbcp']
+  cluster 11: ['commons-lang']
+  cluster 12: ['commons-digester']
+  cluster 13: ['commons-io']
+  cluster 14: ['commons-math']
+  cluster 15: ['commons-scxml']
+  cluster 16: ['parquet-mr']
+  cluster 17: ['ant-ivy']  (singleton, no pom.xml -> own cluster)
+
+--- Overall metrics (all test commits) ---
+  [OVERALL] n=5480 F1=0.0595 Gmean=0.1877 MCC=0.0429 Recall@20%Effort=0.4632 Effort@20%Recall=0.0437 Popt=0.6661 (AUC=0.5708)
+
+--- Per-cluster metrics ---
+  [CLUSTER-0] n=165 projects=['commons-bcel']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.6667 Effort@20%Recall=0.0623 Popt=0.8473 (AUC=0.5433)
+  [CLUSTER-1] n=121 projects=['commons-validator']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.5 Effort@20%Recall=0.0351 Popt=0.6397 (AUC=0.6156)
+  [CLUSTER-2] n=170 projects=['giraph']
+      F1=0.36 Gmean=0.5068 MCC=0.2826 Recall@20%Effort=0.5758 Effort@20%Recall=0.041 Popt=0.8317 (AUC=0.7083)
+  [CLUSTER-3] n=111 projects=['gora']
+      F1=0.0 Gmean=0.0 MCC=-0.0777 Recall@20%Effort=0.375 Effort@20%Recall=0.1567 Popt=0.5515 (AUC=0.4181)
+  [CLUSTER-4] n=223 projects=['commons-vfs']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.3913 Effort@20%Recall=0.1073 Popt=0.5798 (AUC=0.5805)
+  [CLUSTER-5] n=961 projects=['commons-codec', 'commons-collections', 'commons-net', 'opennlp']
+      F1=0.0 Gmean=0.0 MCC=-0.0119 Recall@20%Effort=0.3934 Effort@20%Recall=0.0347 Popt=0.6117 (AUC=0.501)
+  [CLUSTER-6] n=123 projects=['commons-beanutils']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.0 Effort@20%Recall=0.6624 Popt=0.2059 (AUC=0.3489)
+  [CLUSTER-7] n=327 projects=['commons-compress']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.5556 Effort@20%Recall=0.0359 Popt=0.7471 (AUC=0.7131)
+  [CLUSTER-8] n=368 projects=['commons-configuration']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.1935 Effort@20%Recall=0.2292 Popt=0.4556 (AUC=0.5617)
+  [CLUSTER-9] n=167 projects=['commons-jcs']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.3333 Effort@20%Recall=0.0485 Popt=0.6528 (AUC=0.7123)
+  [CLUSTER-10] n=208 projects=['commons-dbcp']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.0 Effort@20%Recall=0.3421 Popt=0.335 (AUC=0.3586)
+  [CLUSTER-11] n=595 projects=['commons-lang']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.6 Effort@20%Recall=0.0188 Popt=0.8373 (AUC=0.4543)
+  [CLUSTER-12] n=216 projects=['commons-digester']
+      F1=0.0 Gmean=0.0 MCC=-0.0665 Recall@20%Effort=0.5 Effort@20%Recall=0.0345 Popt=0.6716 (AUC=0.3803)
+  [CLUSTER-13] n=229 projects=['commons-io']
+      F1=0.0 Gmean=0.0 MCC=0.0 Recall@20%Effort=0.5333 Effort@20%Recall=0.0544 Popt=0.6667 (AUC=0.545)
+  [CLUSTER-14] n=806 projects=['commons-math']
+      F1=0.0 Gmean=0.0 MCC=-0.015 Recall@20%Effort=0.2985 Effort@20%Recall=0.0672 Popt=0.6181 (AUC=0.5296)
+  [CLUSTER-15] n=110 projects=['commons-scxml']
+      F1=0.4 Gmean=0.6132 MCC=0.34 Recall@20%Effort=0.2 Effort@20%Recall=0.1992 Popt=0.6447 (AUC=0.812)
+  [CLUSTER-16] n=225 projects=['parquet-mr']
+      F1=0.0606 Gmean=0.1768 MCC=0.1641 Recall@20%Effort=0.375 Effort@20%Recall=0.0508 Popt=0.7205 (AUC=0.8)
+  [CLUSTER-17] n=355 projects=['ant-ivy']
+      F1=0.0732 Gmean=0.2071 MCC=0.006 Recall@20%Effort=0.597 Effort@20%Recall=0.0317 Popt=0.8096 (AUC=0.4746)
+
+--- Per-project metrics (ClusterCommit tests each project individually) ---
+  ant-ivy                cluster=17 n=355   buggy=67   P=0.2 R=0.0448 F1=0.0732 Gmean=0.2071 MCC=0.006 R@20%E=0.597 E@20%R=0.0317 Popt=0.8096 (AUC=0.4746)
+  commons-bcel           cluster=0 n=165   buggy=12   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.6667 E@20%R=0.0623 Popt=0.8473 (AUC=0.5433)
+  commons-beanutils      cluster=6 n=123   buggy=8    P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.0 E@20%R=0.6624 Popt=0.2059 (AUC=0.3489)
+  commons-codec          cluster=5 n=153   buggy=8    P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.5 E@20%R=0.035 Popt=0.7481 (AUC=0.5789)
+  commons-collections    cluster=5 n=365   buggy=10   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=-0.0125 R@20%E=0.3 E@20%R=0.059 Popt=0.5266 (AUC=0.6463)
+  commons-compress       cluster=7 n=327   buggy=36   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.5556 E@20%R=0.0359 Popt=0.7471 (AUC=0.7131)
+  commons-configuration  cluster=8 n=368   buggy=31   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.1935 E@20%R=0.2292 Popt=0.4556 (AUC=0.5617)
+  commons-dbcp           cluster=10 n=208   buggy=12   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.0 E@20%R=0.3421 Popt=0.335 (AUC=0.3586)
+  commons-digester       cluster=12 n=216   buggy=4    P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=-0.0665 R@20%E=0.5 E@20%R=0.0345 Popt=0.6716 (AUC=0.3803)
+  commons-io             cluster=13 n=229   buggy=15   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.5333 E@20%R=0.0544 Popt=0.6667 (AUC=0.545)
+  commons-jcs            cluster=9 n=167   buggy=18   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.3333 E@20%R=0.0485 Popt=0.6528 (AUC=0.7123)
+  commons-lang           cluster=11 n=595   buggy=30   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.6 E@20%R=0.0188 Popt=0.8373 (AUC=0.4543)
+  commons-math           cluster=14 n=806   buggy=67   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=-0.015 R@20%E=0.2985 E@20%R=0.0672 Popt=0.6181 (AUC=0.5296)
+  commons-net            cluster=5 n=225   buggy=24   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.2917 E@20%R=0.0408 Popt=0.5075 (AUC=0.4706)
+  commons-scxml          cluster=15 n=110   buggy=10   P=0.4 R=0.4 F1=0.4 Gmean=0.6132 MCC=0.34 R@20%E=0.2 E@20%R=0.1992 Popt=0.6447 (AUC=0.812)
+  commons-validator      cluster=1 n=121   buggy=8    P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.5 E@20%R=0.0351 Popt=0.6397 (AUC=0.6156)
+  commons-vfs            cluster=4 n=223   buggy=23   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.3913 E@20%R=0.1073 Popt=0.5798 (AUC=0.5805)
+  giraph                 cluster=2 n=170   buggy=33   P=0.5294 R=0.2727 F1=0.36 Gmean=0.5068 MCC=0.2826 R@20%E=0.5758 E@20%R=0.041 Popt=0.8317 (AUC=0.7083)
+  gora                   cluster=3 n=111   buggy=8    P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=-0.0777 R@20%E=0.375 E@20%R=0.1567 Popt=0.5515 (AUC=0.4181)
+  opennlp                cluster=5 n=218   buggy=19   P=0.0 R=0.0 F1=0.0 Gmean=0.0 MCC=0.0 R@20%E=0.3158 E@20%R=0.1106 Popt=0.6553 (AUC=0.5032)
+  parquet-mr             cluster=16 n=225   buggy=32   P=1.0 R=0.0312 F1=0.0606 Gmean=0.1768 MCC=0.1641 R@20%E=0.375 E@20%R=0.0508 Popt=0.7205 (AUC=0.8)
+
+  [PROJECT-AVG] F1=0.0426 Gmean=0.0716 MCC=0.0296 Recall@20%Effort=0.3858 Effort@20%Recall=0.1154 Popt=0.6311

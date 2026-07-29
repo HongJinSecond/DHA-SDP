@@ -1,0 +1,37 @@
+author,n_train,n_train_buggy,has_personal_model,skip_reason,n_test_routed_to_personal
+Xavier Hanin,738,165,True,,5
+Maarten Coene,243,18,True,,84
+Mark R. Diggory,113,1,True,,0
+Phil Steitz,632,40,True,,44
+Luc Maisonobe,847,112,True,,288
+Gilles Sadowski,390,33,True,,44
+Sebastian Bazley,1436,36,True,,523
+Sebastien Brisard,129,1,True,,0
+Robert Burrell Donkin,166,12,True,,0
+Dirk Verbeeck,151,7,True,,0
+Henri Yandell,870,51,True,,3
+Niall Pemberton,383,16,True,,8
+Ju00c3u00b6rn Kottmann,363,30,True,,74
+William Colen,229,20,True,,1
+julien,284,44,True,,2
+Tianshuo Deng,135,19,True,,13
+Stephen Colebourne,1161,62,True,,1
+Gary D. Gregory,774,31,True,,473
+Matthew Jason Benson,126,7,True,,5
+Oliver Heger,833,57,True,,349
+Rory Winston,180,36,True,,0
+Craig R. McClanahan,133,2,True,,50
+Rodney Waldhoff,133,0,False,single_class_in_training,0
+Mario Ivankovits,288,50,True,,0
+Stefan Bodewig,542,69,True,,235
+Emmanuel Bourg,269,32,True,,7
+Ralph Goers,103,1,True,,7
+Rahul Akolkar,359,29,True,,0
+Simone Tripodi,371,7,True,,169
+Aaron Smuts,312,44,True,,0
+David Brosius,136,13,True,,18
+David Graham,139,2,True,,0
+adammurdoch,148,16,True,,0
+Avery Ching,218,63,True,,3
+Mark Thomas,167,6,True,,21
+Lewis John McGibbney,136,8,True,,5

@@ -1,0 +1,60 @@
+===== PCC Routing & Metrics Summary =====
+
+Train size: 16374 | Test size: 5480
+Authors in train: 193 | authors with > 100 train samples: 36
+Personal models built: 35 / 36 candidates
+Global model train samples (small authors only): 2737 (buggy=250)
+
+--- Test routing ---
+Total test samples: 5480
+  routed to a personal model: 2432
+  routed to the Global model : 3048
+Distinct test authors that used a personal model: 25
+
+--- Authors WITH a personal model ---
+  Sebastian Bazley             train=1436   buggy=36     test_used=523   OK
+  Stephen Colebourne           train=1161   buggy=62     test_used=1     OK
+  Henri Yandell                train=870    buggy=51     test_used=3     OK
+  Luc Maisonobe                train=847    buggy=112    test_used=288   OK
+  Oliver Heger                 train=833    buggy=57     test_used=349   OK
+  Gary D. Gregory              train=774    buggy=31     test_used=473   OK
+  Xavier Hanin                 train=738    buggy=165    test_used=5     OK
+  Phil Steitz                  train=632    buggy=40     test_used=44    OK
+  Stefan Bodewig               train=542    buggy=69     test_used=235   OK
+  Gilles Sadowski              train=390    buggy=33     test_used=44    OK
+  Niall Pemberton              train=383    buggy=16     test_used=8     OK
+  Simone Tripodi               train=371    buggy=7      test_used=169   OK
+  Ju00c3u00b6rn Kottmann       train=363    buggy=30     test_used=74    OK
+  Rahul Akolkar                train=359    buggy=29     test_used=0     OK
+  Aaron Smuts                  train=312    buggy=44     test_used=0     OK
+  Mario Ivankovits             train=288    buggy=50     test_used=0     OK
+  julien                       train=284    buggy=44     test_used=2     OK
+  Emmanuel Bourg               train=269    buggy=32     test_used=7     OK
+  Maarten Coene                train=243    buggy=18     test_used=84    OK
+  William Colen                train=229    buggy=20     test_used=1     OK
+  Avery Ching                  train=218    buggy=63     test_used=3     OK
+  Rory Winston                 train=180    buggy=36     test_used=0     OK
+  Mark Thomas                  train=167    buggy=6      test_used=21    OK
+  Robert Burrell Donkin        train=166    buggy=12     test_used=0     OK
+  Dirk Verbeeck                train=151    buggy=7      test_used=0     OK
+  adammurdoch                  train=148    buggy=16     test_used=0     OK
+  David Graham                 train=139    buggy=2      test_used=0     OK
+  David Brosius                train=136    buggy=13     test_used=18    OK
+  Lewis John McGibbney         train=136    buggy=8      test_used=5     OK
+  Tianshuo Deng                train=135    buggy=19     test_used=13    OK
+  Craig R. McClanahan          train=133    buggy=2      test_used=50    OK
+  Rodney Waldhoff              train=133    buggy=0      test_used=0     SKIPPED(single_class_in_training)
+  Sebastien Brisard            train=129    buggy=1      test_used=0     OK
+  Matthew Jason Benson         train=126    buggy=7      test_used=5     OK
+  Mark R. Diggory              train=113    buggy=1      test_used=0     OK
+  Ralph Goers                  train=103    buggy=1      test_used=7     OK
+
+--- Metrics (effort-free, threshold = 0.5) ---
+  [OVERALL] n=5480 acc=0.8743 P=0.2228 R=0.1811 F1=0.1998 AUC=0.6440 TP=86 FP=300 FN=389 TN=4705
+  [PERSONAL-subset] n=2432 acc=0.8405 P=0.1547 R=0.1065 F1=0.1261 AUC=0.5794 TP=28 FP=153 FN=235 TN=2016
+  [GLOBAL-subset] n=3048 acc=0.9012 P=0.2829 R=0.2736 F1=0.2782 AUC=0.7748 TP=58 FP=147 FN=154 TN=2689
+
+--- Effort-aware & extra metrics (effort = la + ld = LOC) ---
+  [OVERALL] gmean=0.4126 Recall@20%Effort=0.6505 Effort@20%Recall=0.0228 Popt=0.8277  (F1=0.1998 AUC=0.644)
+  [PERSONAL-subset] gmean=0.3146 Recall@20%Effort=0.6236 Effort@20%Recall=0.0299 Popt=0.8198  (F1=0.1261 AUC=0.5794)
+  [GLOBAL-subset] gmean=0.5093 Recall@20%Effort=0.5896 Effort@20%Recall=0.025 Popt=0.824  (F1=0.2782 AUC=0.7748)

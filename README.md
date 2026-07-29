@@ -8,6 +8,8 @@ Python 3.10
 
 Windows 11
 
+pip install -r requirement.txt
+
 ## Structure
 
 ### ./baselines
@@ -196,7 +198,7 @@ After running all the test scripts, make sure that the experimental results have
 
 **RQ1 - RQ3 Table**
 
-```shell
+```sh
 python RQs.py
 ```
 
@@ -204,11 +206,20 @@ python RQs.py
 
 **Significant result**
 
-Run `Significant_result.ipynb`
+Run `Significant.ipynb`
 
 
 **Figure Plot**
 Run `plot.py`
 Run `outlier_stats.py`
 
+
+
+### To test K belongs to [2,4,6,8]:
+
+```sh
+python n_cluster_comparision.py --do_train
+python n_cluster_comparision_cct5.py --do_train
+python n_cluster_comparision.py --plot
+```
 

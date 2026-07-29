@@ -1,0 +1,84 @@
+{
+  "clusters": [
+    [
+      "commons-bcel"
+    ],
+    [
+      "commons-validator"
+    ],
+    [
+      "giraph"
+    ],
+    [
+      "gora"
+    ],
+    [
+      "commons-vfs"
+    ],
+    [
+      "commons-codec",
+      "commons-collections",
+      "commons-net",
+      "opennlp"
+    ],
+    [
+      "commons-beanutils"
+    ],
+    [
+      "commons-compress"
+    ],
+    [
+      "commons-configuration"
+    ],
+    [
+      "commons-jcs"
+    ],
+    [
+      "commons-dbcp"
+    ],
+    [
+      "commons-lang"
+    ],
+    [
+      "commons-digester"
+    ],
+    [
+      "commons-io"
+    ],
+    [
+      "commons-math"
+    ],
+    [
+      "commons-scxml"
+    ],
+    [
+      "parquet-mr"
+    ],
+    [
+      "ant-ivy"
+    ]
+  ],
+  "project_to_cluster": {
+    "commons-bcel": 0,
+    "commons-validator": 1,
+    "giraph": 2,
+    "gora": 3,
+    "commons-vfs": 4,
+    "commons-codec": 5,
+    "commons-collections": 5,
+    "commons-net": 5,
+    "opennlp": 5,
+    "commons-beanutils": 6,
+    "commons-compress": 7,
+    "commons-configuration": 8,
+    "commons-jcs": 9,
+    "commons-dbcp": 10,
+    "commons-lang": 11,
+    "commons-digester": 12,
+    "commons-io": 13,
+    "commons-math": 14,
+    "commons-scxml": 15,
+    "parquet-mr": 16,
+    "ant-ivy": 17
+  }
+}
